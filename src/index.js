@@ -1,58 +1,21 @@
 import express from "express";
 import cors from "cors";
-import { ApolloServer, gql } from "apollo-server-express";
+import { ApolloServer } from "apollo-server-express";
+
+import schema from "./schema";
+import resolvers from "./resolvers";
+import models from "./models";
 
 const app = express();
 
 app.use(cors());
 
-const schema = gql`
-  type Query {
-    me: User
-    user(id: ID!): User
-    users: [User!]
-  }
-
-  type User {
-    id: ID!
-    username: String!
-  }
-`;
-let users = {
-  1: {
-    id: "1",
-    username: "Robin Wieruch"
-  },
-  2: {
-    id: "2",
-    username: "Dave Davids"
-  }
-};
-
-const resolvers = {
-  Query: {
-    me: (parent, args, {me}) => {
-      return me;
-    },
-    user: (parent, { id }) => {
-      return users[id];
-    },
-    users: () => {
-      return Object.values(users);
-    }
-  },
-  User: {
-    username: parent => {
-      return parent.username;
-    }
-  }
-};
-
 const server = new ApolloServer({
   typeDefs: schema,
   resolvers,
   context: {
-    me: users[1]
+    models,
+    me: models.users[1]
   }
 });
 
