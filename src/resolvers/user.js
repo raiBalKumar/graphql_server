@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import { AuthenticationError, UserInputError } from "apollo-server";
 
 export default {
   Query: {
@@ -28,7 +29,8 @@ export default {
       });
 
       return { token: createToken(user, secret, "30m") };
-    }
+    },
+    signIn: async()
   },
   User: {
     messages: async (user, args, { models }) => {
